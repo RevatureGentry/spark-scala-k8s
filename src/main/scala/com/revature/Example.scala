@@ -5,6 +5,7 @@ import org.apache.spark.sql.SparkSession
 
 object Example {
   def main(args: Array[String]): Unit = {
+    // START OF NEEDED CONFIGURATION
     if (args.length <= 2) {
       System.err.println("EXPECTED 2 ARGUMENTS: AWS Access Key, then AWS Secret Key, then S3 Bucket")
       System.exit(1)
@@ -26,6 +27,8 @@ object Example {
     spark.sparkContext.hadoopConfiguration.set("fs.s3.impl", "org.apache.hadoop.fs.s3native.NativeS3FileSystem")
     spark.sparkContext.hadoopConfiguration.set("fs.s3.awsAccessKeyId", accessKey)
     spark.sparkContext.hadoopConfiguration.set("fs.s3.awsSecretAccessKey", secretKey)
+
+    // END OF NEEDED CONFIGURATION
     import spark.implicits._
 
     val df = spark.read.option("multiline", value = true).json(filePath)

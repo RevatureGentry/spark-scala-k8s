@@ -1,0 +1,14 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: example-cron-job
+spec:
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+            - name: example-cron-job
+              image: some-image # This should be a public image repository
+          restartPolicy: Never
+  schedule: "*/5 * * * *" # Run the job once every 5 minutes

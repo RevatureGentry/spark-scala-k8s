@@ -2,10 +2,9 @@
 SPARK_HOME=/mnt/c/Users/WilliamGentry/dev/spark-3.0.1-bin-hadoop2.7
 SCHEME="file"
 APPLICATION_JAR_LOCATION="$SCHEME:///mnt/c/Users/WilliamGentry/dev/projects/s3-example/target/scala-2.12/s3-example_2.12-0.1.jar"
-AWS_ACCESS_KEY_ID=""
-AWS_SECRET_ACCESS_KEY=""
-S3_BUCKET=""
-S3_INPUT="$S3_BUCKET/path/to/your/data"
+AWS_ACCESS_KEY_ID="$1" # Accepts the AWS_ACCESS_KEY_ID as first arg
+AWS_SECRET_ACCESS_KEY="$2" # Accepts the AWS_SECRET_ACCESS_KEY as second arg
+S3_BUCKET="$3" # Accepts the path to the file in bucket as third arg
 
 set -e
 
@@ -26,7 +25,6 @@ $SPARK_HOME/bin/spark-submit \
     --conf spark.driver.log.persistToDfs.enabled=true \
     --conf spark.driver.log.dfsDir="$S3_BUCKET/spark-driver-logs/" \
     --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
-    --conf spark.executor.instances=3 \
     --conf spark.kubernetes.driver.request.cores=1 \
     --conf spark.kubernetes.executor.request.cores=1 \
     --conf spark.hadoop.fs.s3a.path.style.access=true \
@@ -36,4 +34,5 @@ $SPARK_HOME/bin/spark-submit \
     --conf spark.executor.request.memory=1g \
     --conf spark.driver.request.memory=1g \
     --conf spark.kubernetes.container.image=855430746673.dkr.ecr.us-east-1.amazonaws.com/adam-king-848-example-spark \
-    $APPLICATION_JAR_LOCATION $AWS_ACCESS_KEY_ID $AWS_SECRET_ACCESS_KEY $S3_INPUT
+    --conf spark.executor.instances=2 \
+    $APPLICATION_JAR_LOCATION "$AWS_ACCESS_KEY_ID" "$AWS_SECRET_ACCESS_KEY" "$S3_BUCKET"
